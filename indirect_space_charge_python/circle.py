@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
-
 import numpy as np
-from PyBE import gaussian as g
+from gaussian import get_field as g
 
 def get_field(x, y, x0, y0, sx, sy, R):
     """

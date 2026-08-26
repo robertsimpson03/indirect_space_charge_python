@@ -1,10 +1,8 @@
 import numpy as np
-from scipy.constants import epsilon_0
-
 import xtrack as xt
-
-from pipefields.rectangle import get_field as rectangular_field
-from pipefields.freespace import get_field as free_field
+from freespace import get_field as free_field
+from rectangle import get_field as rectangular_field
+from scipy.constants import epsilon_0
 
 k_e = 1/(4*np.pi*epsilon_0)
 

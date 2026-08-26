@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import numpy as np
 
 def get_field(x, y, x0, y0, sx, sy, Lx, Ly, Nx=None, Ny=None):
@@ -39,12 +37,12 @@ def get_field(x, y, x0, y0, sx, sy, Lx, Ly, Nx=None, Ny=None):
     Ey : ndarray
         y-component of the electric field.
     """
-    
+
     if Nx==None:
         Nx = np.pi*Lx/sx
     if Ny==None:
         Ny = np.pi*Ly/sy
-        
+
     x0, y0 = x0 + Lx/2, y0 + Ly/2
     x = np.atleast_1d(x)
     y = np.atleast_1d(y)
