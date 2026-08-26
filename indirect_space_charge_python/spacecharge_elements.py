@@ -1,7 +1,6 @@
 import numpy as np
 import xtrack as xt
-from freespace import get_field as free_field
-from rectangle import get_field as rectangular_field
+from field_expressions import no_pipe, circular_pipe, elliptical_pipe, rectangular_pipe
 from scipy.constants import epsilon_0
 
 k_e = 1/(4*np.pi*epsilon_0)
