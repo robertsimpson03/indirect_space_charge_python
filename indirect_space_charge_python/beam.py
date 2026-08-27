@@ -13,8 +13,11 @@ class GaussianBeam:
     def direct_sc(self, x, y):
         x = x - self.x0
         y = y - self.y0
+        return self._direct_sc(x, y)
+
+    def _direct_sc(self, x, y):
         if abs(self.sx - self.sy)/(self.sx + self.sy) < TOLERANCE:
-            Ex, Ey = _circular_gaussian(x, y, np.mean([self.sx,self.sy]))
+            Ex, Ey = _circular_gaussian(x, y, np.mean([self.sx, self.sy]))
         elif self.sx > self.sy:
             Ex, Ey = _elliptical_gaussian(x, y, self.sx, self.sy)
         else:
@@ -32,20 +35,23 @@ class UniformBeam:
     def direct_sc(self,x, y):
         x = x - self.x0
         y = y - self.y0
+        return self._direct_sc(x, y)
+
+    def _direct_sc(self, x, y):
         rx_sqrd, ry_sqrd = self.rx**2, self.ry**2
         x_sqrd, y_sqrd = x**2, y**2
-        inside = (x_sqrd / rx_sqrd + y_sqrd / ry_sqrd) <= 1
+        inside = (x_sqrd/rx_sqrd + y_sqrd/ry_sqrd) <= 1
 
         # Elliptical coordinate parameter `s` solution to s^2+bs+c=0
         b = rx_sqrd + ry_sqrd - x_sqrd - y_sqrd
-        c = rx_sqrd * ry_sqrd - x_sqrd * ry_sqrd - y_sqrd * rx_sqrd
-        s = (-b + np.sqrt(b**2 - 4 * c)) / 2
+        c = rx_sqrd*ry_sqrd - x_sqrd*ry_sqrd - y_sqrd*rx_sqrd
+        s = (-b + np.sqrt(b**2 - 4*c))/2
 
         denom_in = self.rx + self.ry
-        denom_out = s + np.sqrt((rx_sqrd + s) * (ry_sqrd + s))
+        denom_out = s + np.sqrt((rx_sqrd + s)*(ry_sqrd + s))
 
-        Ex = x / np.where(inside, self.rx * denom_in, rx_sqrd + denom_out)
-        Ey = y / np.where(inside, self.ry * denom_in, ry_sqrd + denom_out)
+        Ex = x/np.where(inside, self.rx*denom_in, rx_sqrd + denom_out)
+        Ey = y/np.where(inside, self.ry*denom_in, ry_sqrd + denom_out)
         return Ex, Ey
 
 
@@ -70,10 +76,10 @@ def _bassetti_erskine(x, y, sx, sy):
     omega = x*sy/sx + 1j*y*sx/sy
 
     xi_sqrd = (x/sx)**2+(y/sy)**2
-    denom = 1 / np.sqrt(2 * (sx**2-sy**2))
-    s1 = z * denom
-    s2 = omega * denom
-    prefactor = 2j*np.sqrt(np.pi) * denom
+    denom = 1/np.sqrt(2*(sx**2-sy**2))
+    s1 = z*denom
+    s2 = omega*denom
+    prefactor = 2j*np.sqrt(np.pi)*denom
 
-    field = prefactor * (np.exp(-xi_sqrd/2)*wofz(s2) - wofz(s1))
+    field = prefactor*(np.exp(-xi_sqrd/2)*wofz(s2) - wofz(s1))
     return field.real, -field.imag
