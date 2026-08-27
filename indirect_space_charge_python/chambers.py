@@ -54,8 +54,8 @@ class RectangularChamber:
         x0, y0 = beam.x0 + lx/2, beam.y0 + ly/2
         x, y = x + lx/2, y+ly/2
 
-        nx = nx or int(np.ceil(np.pi*lx/sx))
-        ny = ny or int(np.ceil(np.pi*ly/sy))
+        nx = nx or int(np.ceil(np.pi*lx/beam.sx))
+        ny = ny or int(np.ceil(np.pi*ly/beam.sy))
         kn = np.pi * np.arange(1, nx + 1)/lx
         km = np.pi * np.arange(1, ny + 1)/ly
         KN, KM = np.meshgrid(kn, km, indexing='ij')
@@ -63,13 +63,13 @@ class RectangularChamber:
         norm = 16.0*np.pi/(lx*ly)
         rho_delta = np.sin(KN*x0)*np.sin(KM*y0)
         rho_gaussian = np.exp(-0.5*((KN*beam.sx)**2 + (KM*beam.sy)**2))
-        fourier_coefs = norm*rho_delta*rho_gaussian/(KN**2 + KM**2)
+        phi = norm*rho_delta*rho_gaussian/(KN**2 + KM**2)
 
         kx_grid = x[:, None]*kn
         ky_grid = y[:, None]*km
-        term_y = np.sin(ky_grid) @ fourier_coefs.T
+        term_y = np.sin(ky_grid) @ phi.T
         Ex = -np.sum(np.cos(kx_grid)*term_y*kn, axis=1)
-        term_x = np.sin(kx_grid) @ fourier_coefs
+        term_x = np.sin(kx_grid) @ phi
         Ey = -np.sum(np.cos(ky_grid)*term_x*km, axis=1)
 
         return Ex, Ey

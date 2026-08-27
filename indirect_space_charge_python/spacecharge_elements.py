@@ -3,7 +3,7 @@ import xtrack as xt
 from field_expressions import no_pipe, circular_pipe, elliptical_pipe, rectangular_pipe
 from scipy.constants import epsilon_0
 
-k_e = 1/(4*np.pi*epsilon_0)
+k_e = 1.0/(4*np.pi*epsilon_0)
 
 class IndirectSpaceChargeElement(xt.BeamElement):
     _xofields = {
