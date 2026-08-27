@@ -56,21 +56,21 @@ class RectangularChamber:
 
         nx = nx or int(np.ceil(np.pi*lx/beam.sx))
         ny = ny or int(np.ceil(np.pi*ly/beam.sy))
-        kn = np.pi * np.arange(1, nx + 1)/lx
-        km = np.pi * np.arange(1, ny + 1)/ly
-        KN, KM = np.meshgrid(kn, km, indexing='ij')
+        kx = np.pi * np.arange(1, nx + 1)/lx
+        ky = np.pi * np.arange(1, ny + 1)/ly
+        KX, KY = np.meshgrid(kx, ky, indexing='ij')
 
         norm = 16.0*np.pi/(lx*ly)
-        rho_delta = np.sin(KN*x0)*np.sin(KM*y0)
-        rho_gaussian = np.exp(-0.5*((KN*beam.sx)**2 + (KM*beam.sy)**2))
-        phi = norm*rho_delta*rho_gaussian/(KN**2 + KM**2)
+        rho_delta = np.sin(KX*x0)*np.sin(KY*y0)
+        rho_gaussian = np.exp(-0.5*((KX*beam.sx)**2 + (KY*beam.sy)**2))
+        phi = norm*rho_delta*rho_gaussian/(KX**2 + KY**2)
 
-        kx_grid = x[:, None]*kn
-        ky_grid = y[:, None]*km
+        kx_grid = x[:, None]*kx
+        ky_grid = y[:, None]*ky
         term_y = np.sin(ky_grid) @ phi.T
-        Ex = -np.sum(np.cos(kx_grid)*term_y*kn, axis=1)
+        Ex = -np.sum(np.cos(kx_grid)*term_y*kx, axis=1)
         term_x = np.sin(kx_grid) @ phi
-        Ey = -np.sum(np.cos(ky_grid)*term_x*km, axis=1)
+        Ey = -np.sum(np.cos(ky_grid)*term_x*ky, axis=1)
 
         return Ex, Ey
 
