@@ -1,6 +1,6 @@
 import numpy as np
 import xtrack as xt
-from field_expressions import no_pipe, circular_pipe, elliptical_pipe, rectangular_pipe
+from chamber import NoChamber, CircularChamber, RectangularChamber
 from scipy.constants import epsilon_0
 
 k_e = 1.0/(4*np.pi*epsilon_0)
