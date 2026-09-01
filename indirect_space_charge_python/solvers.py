@@ -32,6 +32,10 @@ def indirect_field(x, y, x0, y0, sx, sy, mx, my, l):
     return Ex_ind, Ey_ind
 
 
+def elliptical_field(x, y, x0, y0, sx, sy, mx, my, a, b):
+    raise NotImplementedError
+
+
 def rectangular_field(x, y, x0, y0, sx, sy, mx, my, lx, ly, nx, ny):
     x0, y0 = x0 + lx/2 - mx, y0 + ly/2 - my # Move origin to corner of pipe
     x, y = x + lx/2 - mx, y+ly/2 - my
@@ -55,9 +59,6 @@ def rectangular_field(x, y, x0, y0, sx, sy, mx, my, lx, ly, nx, ny):
     Ey = -np.sum(np.cos(ky_grid)*term_x*ky, axis=1)
 
     return Ex, Ey
-
-
-#######################################################################
 
 
 def _gaussian_field(x, y, sx, sy):
