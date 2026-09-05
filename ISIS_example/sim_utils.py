@@ -1,4 +1,4 @@
-import Path
+from pathlib import Path
 import time
 import h5py
 
@@ -16,15 +16,20 @@ import xfields as xf
 from cpymad.madx import Madx
 
 
-def build_line(folder=Path('../Lattice_Files/02_aper_Lattice/'),
+def build_line(directory=None,
                slices=4, thick=False, install_apertures=True):
+    if directory==None:
+        module_directory = Path(__file__).resolve().parent 
+        directory = module_directory / '../Lattice_Files/02_Aperture_Lattice/'
+        directory = Path(directory).resolve()
 
+    print(str(directory / 'ISIS.injected_beam'))
     madx = Madx(stdout=False)
-    madx.call(str(folder / 'ISIS.injected_beam'))
-    madx.call(str(folder / 'ISIS.elements'))
-    madx.call(str(folder / 'ISIS.strength'))
-    madx.call(str(folder / 'ISIS.sequence'))
-    madx.call(str(folder / 'ISIS.aperture'))
+    madx.call(str(directory / 'ISIS.injected_beam'))
+    madx.call(str(directory / 'ISIS.elements'))
+    madx.call(str(directory / 'ISIS.strength'))
+    madx.call(str(directory / 'ISIS.sequence'))
+    madx.call(str(directory / 'ISIS.aperture'))
     madx.use('synchrotron')
     madx.command.select(flag='makethin', slice=slices, thick=thick)
     madx.command.makethin(sequence='synchrotron', style='teapot',
@@ -83,8 +88,7 @@ def add_spacecharge_xfields(line,
             number_of_particles= number_of_particles_fake,
             sigma_z= sigma_z_fake
         )
-    xf.install_spacecharge_frozen(
-        line=line,
+    line.xf.spacecharge_install_frozen(
         longitudinal_profile=lprofile,
         nemitt_x=nemitt_x,
         nemitt_y=nemitt_y,
@@ -92,3 +96,5 @@ def add_spacecharge_xfields(line,
         num_spacecharge_interactions=num_spacecharge_interactions,
         delta_rms=0
         )
+
+    return line
