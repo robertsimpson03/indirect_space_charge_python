@@ -60,20 +60,12 @@ def add_dipole(line, strength, s=0, mode='normal'):
 
     return line
 
-
-def add_monitors(line, particles, n_monitors, n_turns):
-    s_positions = np.linspace(0, line.get_length(), n_monitors, endpoint=False)
+def add_monitor(line, particles, s, n_turns, name='untitled'):
     n_particles = len(particles.particle_id)
-
-    monitors = []
-    for i, s in enumerate(s_positions):
-        mon = xt.ParticlesMonitor(start_at_turn=0, stop_at_turn=n_turns,
-                                  num_particles=n_particles)
-        monitors.append(line.env.place(f'mon_{i}', obj=mon, at=s))
-
-    line.insert(monitors)
+    mon = xt.ParticlesMonitor(start_at_turn=0, stop_at_turn=n_turns, num_particles=n_particles)
+    monitor = line.env.place(f'monitor_{name}', obj=mon, at=s)
+    line.insert(monitor)
     return line
-
 
 def add_spacecharge_xfields(line,
                             number_of_particles,
