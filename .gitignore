@@ -1,2 +1,4 @@
 project.md
-indirect_space_charge_python/old/
+indirect_space_charge_python/ISIS_example/old/
+.jupyter
+ISIS_example/.ipynb_checkpoints/
