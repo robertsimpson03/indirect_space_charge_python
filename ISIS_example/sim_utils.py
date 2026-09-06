@@ -88,7 +88,7 @@ def add_spacecharge_xfields(line,
             number_of_particles= number_of_particles_fake,
             sigma_z= sigma_z_fake
         )
-    line.xf.spacecharge_install_frozen(
+    xf.install_spacecharge_frozen(line,
         longitudinal_profile=lprofile,
         nemitt_x=nemitt_x,
         nemitt_y=nemitt_y,
