@@ -57,10 +57,10 @@ class SpaceChargeRectangular(GaussianSpaceChargeBase):
     _xofields = {
         'shift_x': xo.Float64,
         'shift_y': xo.Float64,
-        'width':    xo.Float64,
-        'height':   xo.Float64,
-        'nx':       xo.Field(xo.int64, default=0),
-        'ny':       xo.Field(xo.int64, default=0),
+        'width':   xo.Float64,
+        'height':  xo.Float64,
+        'nx':      xo.Field(xo.Int64, default=0),
+        'ny':      xo.Field(xo.Int64, default=0),
     }
 
     def get_fields(self, particles):

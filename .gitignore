@@ -4,4 +4,5 @@ indirect_space_charge_python/old/
 .jupyter
 ISIS_example/.ipynb_checkpoints/
 ISIS_example/__pycache__/
+indirect_space_charge_python/__pycache__/
 

@@ -21,4 +21,4 @@ line = add_spacecharge_xfields(line, 1e12, n_spacecharge_elements, nemitt_x=1e-6
 line.build_tracker(_context=xo.ContextCpu(omp_num_threads=10))
 line.track(particles, num_turns=n_turns, time=True)
 
-print(line.element_dict['monitor_1'].x)
+print(line.element_dict['monitor_1'])

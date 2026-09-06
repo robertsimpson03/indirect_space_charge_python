@@ -11,9 +11,11 @@ def install_spacecharge_frozen(line,
                                number_of_particles,
                                num_spacecharge_interactions,
                                nemitt_x, nemitt_y,
+                               indirect_sc = True,
                                particle_ref=None,
                                s_spacecharge=None,
-                               prefix='spacecharge_'):
+                               prefix='spacecharge_',
+                               _enlargment=1):
 
     line.discard_tracker() # as we will be changing element types
 
@@ -54,25 +56,31 @@ def install_spacecharge_frozen(line,
         sigma_y = np.sqrt(tw_at_sc['bety'][ii]*emitt_y)
         length = sc_lengths[ii]
 
-        aper_type, aper_params = _get_aper_at_s(line, ss, length)
         base_params = {
-            'element_length': length,
-            'line_density': line_density,
-            'mean_x': mean_x, 'mean_y': mean_y,
-            'sigma_x': sigma_x, 'sigma_y': sigma_y
-        }
+                'element_length': length,
+                'line_density': line_density,
+                'mean_x': mean_x, 'mean_y': mean_y,
+                'sigma_x': sigma_x, 'sigma_y': sigma_y
+            }
 
-        if aper_type == 'circular':
-            sc_element = SpaceChargeCircular(**base_params, **aper_params)
-        elif aper_type == 'rectangular':
-            sc_element = SpaceChargeRectangular(**base_params, **aper_params)
+        if indirect_sc == True:
+            aper_type, aper_params = _get_aper_at_s(line, ss, length, _enlargment)
+            if aper_type == 'circular':
+                sc_element = SpaceChargeCircular(**base_params, **aper_params)
+            elif aper_type == 'rectangular':
+                sc_element = SpaceChargeRectangular(**base_params, **aper_params)
+            else:
+                sc_element = SpaceChargeFree(**base_params)
         else:
             sc_element = SpaceChargeFree(**base_params)
 
+
         line.element_dict[name] = sc_element
 
+        return line
 
-def _get_aper_at_s(line, s, length):
+
+def _get_aper_at_s(line, s, length, _enlargment):
     tt = line.get_table(attr=True)
 
     mask = (tt.s >= s) & (tt.s <= s + length)
@@ -85,7 +93,7 @@ def _get_aper_at_s(line, s, length):
                 return "circular", {
                     'shift_x': aperture.shift_x,
                     'shift_y': aperture.shift_y,
-                    'radius': aperture.a_x,
+                    'radius': _enlargment*aperture.a_x,
                 }
             else:
                 return "elliptical", {}
@@ -93,8 +101,8 @@ def _get_aper_at_s(line, s, length):
         if isinstance(aperture, xt.LimitRect):
             shift_x = (aperture.max_x + aperture.min_x) / 2 + aperture.shift_x
             shift_y = (aperture.max_y + aperture.min_y) / 2 + aperture.shift_y
-            width = aperture.max_x - aperture.min_x
-            height = aperture.max_y - aperture.min_y
+            width = _enlargment*(aperture.max_x - aperture.min_x)
+            height = _enlargment*(aperture.max_y - aperture.min_y)
 
             return "rectangular", {
                 'shift_x': shift_x,
