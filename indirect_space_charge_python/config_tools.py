@@ -7,8 +7,6 @@ import xpart as xp
 
 from spacecharge_elements import SpaceChargeFree, SpaceChargeCircular, SpaceChargeRectangular
 
-# This is a new comment
-
 def install_spacecharge_frozen(line,
                                number_of_particles,
                                num_spacecharge_interactions,
