@@ -5,7 +5,7 @@ from sim_utils import build_line, add_monitor, add_spacecharge_xfields
 
 n_monitors = 20
 n_turns = 50
-#n_spacecharge_elements = 20
+n_spacecharge_elements = 20
 
 line = build_line()
 
@@ -17,7 +17,7 @@ length = line.get_length()
 for i, s in enumerate(np.linspace(0, length, n_monitors, endpoint=False)):
     line = add_monitor(line, particles, s, n_turns, name=i+1)
 
-line = add_spacecharge_xfields(line, 1e9, 10, nemitt_x=1e6, nemitt_y=1e6)
+line = add_spacecharge_xfields(line, 1e12, n_spacecharge_elements, nemitt_x=1e-6, nemitt_y=1e-6)
 line.build_tracker(_context=xo.ContextCpu(omp_num_threads=10))
 line.track(particles, num_turns=n_turns, time=True)
 
