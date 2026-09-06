@@ -77,7 +77,7 @@ def install_spacecharge_frozen(line,
 
         line.element_dict[name] = sc_element
 
-        return line
+    return line
 
 
 def _get_aper_at_s(line, s, length, _enlargment):
