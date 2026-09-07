@@ -36,6 +36,7 @@ class SpaceChargeFree(GaussianSpaceChargeBase):
 
 class SpaceChargeCircular(GaussianSpaceChargeBase):
     _xofields = {
+        **GaussianSpaceChargeBase._xofields,
         'shift_x': xo.Float64,
         'shift_y': xo.Float64,
         'radius':   xo.Float64,
@@ -55,6 +56,7 @@ class SpaceChargeCircular(GaussianSpaceChargeBase):
 
 class SpaceChargeRectangular(GaussianSpaceChargeBase):
     _xofields = {
+        **GaussianSpaceChargeBase._xofields,
         'shift_x': xo.Float64,
         'shift_y': xo.Float64,
         'width':   xo.Float64,
