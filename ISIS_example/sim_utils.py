@@ -43,26 +43,19 @@ def build_line(directory=None,
     return line
 
 
-def add_dipole(line, strength, s=0, mode='normal'):
-    s_list = s if hasattr(s, '__len__') else [s]
-    if not hasattr(strength, '__len__'):
-        strengths = [strength] * len(s_list)
-    else:
-        strengths = strength
-
+def add_dipole(line, k_list, s_list, mode='normal'):
+    s_list = np.atleast_1d(s_list)
+    if not hasattr(k_list, '__len__'):
+        k_list = k_list * np.ones_like(s_list)
     kicks = []
-    if mode=='skew':
-        for pos, st in zip(s_list, strengths):
-            dipole = xt.Multipole(ksl=[st])
-            name = f'dipole_at_{pos:.3f}'
-            kicks.append(line.env.place(name, obj=dipole, at=pos))
-    elif mode=='normal':
-        for pos, st in zip(s_list, strengths):
-            dipole = xt.Multipole(knl=[st])
-            name = f'dipole_at_{pos:.3f}'
-            kicks.append(line.env.place(name, obj=dipole, at=pos))
+    for s_list, k_list in zip(s_list, k_list):
+        name = f'dipole_at_{s_list:.3f}'
+        if mode=='normal':
+            dipole = xt.Multipole(knl=[k_list])
+        else:
+            dipole = xt.Multipole(ksl=[k_list])
+        kicks.append(line.env.place(name, obj=dipole, at=s_list))
     line.insert(kicks)
-
     return line
 
 def add_monitor(line, particles, s, n_turns, name='untitled'):
