@@ -1,17 +1,24 @@
 import numpy as np
 from scipy.special import wofz
 
-TOLERANCE = 1e-10
+TOLERANCE = 1e-10 # For defining when an ellipse will be treated as a circle 
 
 def direct_field(x, y, x0, y0, sx, sy):
+    """ 
+    Field from a 2D Gaussian charge distribution.
+    """
     return _gaussian_field(x-x0, y-y0, sx,sy)
 
 
 def indirect_field(x, y, x0, y0, sx, sy, mx, my, l):
+    """
+    Indirect field from the image distribution induced on a circular
+    PEC cavity by a 2D gaussian charge distribution.
+    """
     x0, y0 = x0 - mx, y0 - my
     x, y = x - mx, y - my
     r_sqrd = x**2 + y**2
-    with np.errstate(divide='ignore', invalid='ignore'): # Ignore errors associated with evaluation at the origin
+    with np.errstate(divide='ignore', invalid='ignore'):
         inv_r_sqrd = 1.0/r_sqrd
         l_sqrd = l**2
         ratio = l_sqrd*inv_r_sqrd
@@ -33,10 +40,18 @@ def indirect_field(x, y, x0, y0, sx, sy, mx, my, l):
 
 
 def elliptical_field(x, y, x0, y0, sx, sy, mx, my, a, b):
+    """
+    Indirect field from the image distribution induced on an elliptical
+    PEC cavity by a 2D gaussian charge distribution.
+    """
     raise NotImplementedError
 
 
 def rectangular_field(x, y, x0, y0, sx, sy, mx, my, lx, ly, nx, ny):
+    """
+    Total field from a 2D gaussian charge distribution in a rectangular
+    PEC.
+    """
     x0, y0 = x0 + lx/2 - mx, y0 + ly/2 - my # Move origin to corner of pipe
     x, y = x + lx/2 - mx, y+ly/2 - my
 
