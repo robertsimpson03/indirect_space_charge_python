@@ -3,14 +3,15 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "my-package"
+name = "indirect_space_charge"
 version = "0.1.0"
 description = "My Python package"
 requires-python = ">=3.10"
 dependencies = [
     "numpy",
     "scipy",
-    "matplotlib",
+    "xtrack",
+    "xtobjects",
 ]
 
 [tool.setuptools.packages.find]
