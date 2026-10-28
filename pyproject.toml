@@ -11,7 +11,7 @@ dependencies = [
     "numpy",
     "scipy",
     "xtrack",
-    "xtobjects",
+    "xobjects",
 ]
 
 [tool.setuptools.packages.find]

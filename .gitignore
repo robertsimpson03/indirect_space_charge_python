@@ -1,4 +1,5 @@
 .jupyter
-indirect_space_charge_python/__pycache__/
+indirect_space_charge/__pycache__/
+indirect_space_charge.egg-info/
 example/.ipynb_checkpoints/
 
