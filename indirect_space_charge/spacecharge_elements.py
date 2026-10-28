@@ -2,7 +2,7 @@ import numpy as np
 import xobjects as xo
 import xtrack as xt
 from scipy.constants import epsilon_0, e
-from solvers import direct_field, indirect_field, rectangular_field
+from .solvers import direct_field, indirect_field, rectangular_field
 
 k_e = 1.0/(4*np.pi*epsilon_0)
 

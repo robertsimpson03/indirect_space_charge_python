@@ -1,7 +1,7 @@
 import numpy as np
 import xtrack as xt
 
-from spacecharge_elements import SpaceChargeFree, SpaceChargeCircular, SpaceChargeRectangular
+from .spacecharge_elements import SpaceChargeFree, SpaceChargeCircular, SpaceChargeRectangular
 
 PREFIX = 'spacecharge_ele_' # How are space charge elements names
 TOL = 1e-2 # For determining is an Elliptical chaber is circular 
