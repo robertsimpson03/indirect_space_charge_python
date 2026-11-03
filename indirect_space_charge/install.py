@@ -17,7 +17,7 @@ def install_spacecharge_frozen(line,
     """Install frozen, coasting, indirect spacecharge elements into an 
        Xtrack line.
 
-      Parameters
+      Parameters this is a change
       ----------
       line : xtrack.Line
           The beam line where spacecharge elements will be installed.
