@@ -9,6 +9,17 @@ def direct_field(x, y, x0, y0, sx, sy):
     """
     return _gaussian_field(x-x0, y-y0, sx,sy)
 
+def linear_field(x, y, x0, y0, sx, sy):
+    """
+    Field from a 2D uniform (KV) charge distribution.
+    """
+    # KV beam with a=2sigma_x and b=2sigma_y
+    # Gives half the tunes spread of a
+    # Gaussian beam at its core
+    a = 2*sx
+    b = 2*sy
+    Ex, Ey = _uniform_field(x-x0, y-y0, a, b)
+    return 2*Ex, 2*Ey
 
 def indirect_field(x, y, x0, y0, sx, sy, mx, my, l):
     """
@@ -85,6 +96,7 @@ def _gaussian_field(x, y, sx, sy):
         Ey, Ex = _elliptical_gaussian(y, x, sy, sx)
     return Ex, Ey
 
+
 def _circular_gaussian(x, y, s):
     r_sqrd = x**2 + y**2
     charge_enclosed = - np.expm1(-r_sqrd/(2*s**2))
@@ -113,3 +125,38 @@ def _bassetti_erskine(x, y, sx, sy):
 
     field = prefactor*(np.exp(-xi_sqrd/2)*wofz(s2) - wofz(s1))
     return field.real, -field.imag
+
+def _uniform_field(x, y, a, b):
+    if abs(a - b)/(a + b) < TOLERANCE:
+        Ex, Ey = _circular_uniform(x, y, np.mean([a, b]))
+    elif a > b:
+        Ex, Ey = _elliptical_uniform(x, y, a, b)
+    else:
+        Ey, Ex = _elliptical_uniform(y, x, b, a)
+    return Ex, Ey
+
+def _circular_uniform(x, y, r):
+    r_sqrd = np.maximum(x**2 + y**2, r**2)
+    Ex = 0.5*x/r_sqrd
+    Ey = 0.5*y/r_sqrd
+    return Ex, Ey
+
+def _elliptical_uniform(x, y, a, b):
+    x_sqrd, y_sqrd = x**2, y**2
+    a_sqrd, b_sqrd = a**2, b**2
+    inside = (x_sqrd / a_sqrd + y_sqrd / b_sqrd) <= 1
+    outside = ~inside
+
+    # Inside the ellipse
+    sum = a + b
+    Ex = x / (a * sum)
+    Ey = y / (b * sum)
+
+    # Outside the ellipse
+    x_out, y_out = x[outside], y[outside]
+    z_bar = x_out-1j*y_out
+    diff_sqrd = a_sqrd - b_sqrd
+    E_complex = 1/(z_bar*(1 - np.sqrt(1 - diff_sqrd/z_bar**2)))
+    Ex[outside] = E_complex.real
+    Ey[outside] = E_complex.imag
+    return Ex, Ey

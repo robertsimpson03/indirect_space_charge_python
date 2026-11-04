@@ -2,7 +2,7 @@ import numpy as np
 import xobjects as xo
 import xtrack as xt
 from scipy.constants import epsilon_0, e
-from .solvers import direct_field, indirect_field, rectangular_field
+from .solvers import direct_field, linear_field, indirect_field, rectangular_field
 
 k_e = 1.0/(4*np.pi*epsilon_0)
 
@@ -30,6 +30,14 @@ class GaussianSpaceChargeBase(xt.BeamElement):
 class SpaceChargeFree(GaussianSpaceChargeBase):
     def get_fields(self, particles):
         return direct_field(particles.x, particles.y,
+                            self.mean_x, self.mean_y,
+                            self.sigma_x, self.sigma_y)
+
+
+# sigmas are now effective sigma such that tune shift at core is matched
+class SpaceChargeLinear(GaussianSpaceChargeBase):
+    def get_fields(self, particles):
+        return linear_field(particles.x, particles.y,
                             self.mean_x, self.mean_y,
                             self.sigma_x, self.sigma_y)
 
