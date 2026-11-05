@@ -14,7 +14,7 @@ def get_footprint_4d(line, nemitt_x=None, nemitt_y=None, n_turns=256,
                      n_x_norm=10, n_y_norm=10,
                      keep_tracking_data=False):
 
-    particles = _build_particles(nemitt_x, nemitt_y, mode,
+    particles = _build_particles(line, nemitt_x, nemitt_y, mode,
                                  r_range, theta_range, n_r, n_theta,
                                  x_norm_range, y_norm_range,
                                  n_x_norm, n_y_norm)
@@ -46,7 +46,7 @@ def get_footprint_4d(line, nemitt_x=None, nemitt_y=None, n_turns=256,
                             'px': px, 'py': py}
     return fp
 
-def _build_particles(nemitt_x, nemitt_y, mode,
+def _build_particles(line, nemitt_x, nemitt_y, mode,
                      r_range, theta_range, n_r, n_theta,
                      x_norm_range, y_norm_range,
                      n_x_norm, n_y_norm):
