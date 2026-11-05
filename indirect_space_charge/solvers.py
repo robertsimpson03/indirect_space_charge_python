@@ -9,6 +9,17 @@ def direct_field(x, y, x0, y0, sx, sy):
     """
     return _gaussian_field(x-x0, y-y0, sx,sy)
 
+def linear_field(x, y, x0, y0, sx, sy):
+    """
+    Field from a 2D uniform (KV) charge distribution.
+    """
+    # KV beam with a=2sigma_x and b=2sigma_y
+    # Gives half the tunes spread of a
+    # Gaussian beam at its core
+    a = np.sqrt(2)*sx
+    b = np.sqrt(2)*sy
+    Ex, Ey = _uniform_field(x-x0, y-y0, a, b)
+    return 2*Ex, 2*Ey
 
 def indirect_field(x, y, x0, y0, sx, sy, mx, my, l):
     """
@@ -85,6 +96,7 @@ def _gaussian_field(x, y, sx, sy):
         Ey, Ex = _elliptical_gaussian(y, x, sy, sx)
     return Ex, Ey
 
+
 def _circular_gaussian(x, y, s):
     r_sqrd = x**2 + y**2
     charge_enclosed = - np.expm1(-r_sqrd/(2*s**2))
@@ -113,3 +125,42 @@ def _bassetti_erskine(x, y, sx, sy):
 
     field = prefactor*(np.exp(-xi_sqrd/2)*wofz(s2) - wofz(s1))
     return field.real, -field.imag
+
+def _uniform_field(x, y, a, b):
+    if abs(a - b)/(a + b) < TOLERANCE:
+        Ex, Ey = _circular_uniform(x, y, np.mean([a, b]))
+    elif a > b:
+        Ex, Ey = _elliptical_uniform(x, y, a, b)
+    else:
+        Ey, Ex = _elliptical_uniform(y, x, b, a)
+    return Ex, Ey
+
+def _circular_uniform(x, y, r):
+    r_sqrd = np.maximum(x**2 + y**2, r**2)
+    Ex = x/r_sqrd
+    Ey = y/r_sqrd
+    return Ex, Ey
+
+def _elliptical_uniform(x, y, a, B):
+    x_sqrd, y_sqrd = x**2, y**2
+    a_sqrd, b_sqrd = a**2, B**2
+    inside = (x_sqrd / a_sqrd + y_sqrd / b_sqrd) <= 1
+    outside = ~inside
+
+    # Inside the ellipse
+    sum = a + B
+    Ex = x / (a * sum)
+    Ey = y / (B * sum)
+
+    # Outside the ellipse
+    x_out, y_out = x[outside], y[outside]
+    x_out_sqrd, y_out_sqrd = x_sqrd[outside], y_sqrd[outside]
+
+    B = a_sqrd + b_sqrd - x_out_sqrd - y_out_sqrd
+    C = a_sqrd*b_sqrd - x_out_sqrd*b_sqrd - y_out_sqrd*a_sqrd
+    root = (-B + np.sqrt(B**2 - 4*C)) / 2
+    denom_out = root + np.sqrt((a_sqrd+root)*(b_sqrd + root))
+    Ex[outside] = x_out / (a_sqrd + denom_out)
+    Ey[outside] = y_out / (b_sqrd + denom_out)
+
+    return 2*Ex, 2*Ey

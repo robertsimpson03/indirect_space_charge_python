@@ -1,7 +1,8 @@
+import warnings
 import numpy as np
 import xtrack as xt
 
-from .spacecharge_elements import SpaceChargeFree, SpaceChargeCircular, SpaceChargeRectangular
+from .spacecharge_elements import SpaceChargeFree, SpaceChargeCircular, SpaceChargeLinear, SpaceChargeRectangular
 
 PREFIX = 'spacecharge_ele_' # How are space charge elements names
 TOL = 1e-2 # For determining is an Elliptical chaber is circular 
@@ -11,6 +12,7 @@ def install_spacecharge_frozen(line,
                                num_spacecharge_interactions,
                                nemitt_x, nemitt_y,
                                indirect_sc = True,
+                               linear = False,
                                particle_ref=None,
                                node_s_list=None,
                                _enlargement=1):
@@ -46,6 +48,10 @@ def install_spacecharge_frozen(line,
       xtrack.Line
           The modified line with the frozen spacecharge elements built and inserted.
     """
+    if indirect_sc and linear:
+        warnings.warn("linear SC disables indirect SC", UserWarning)
+        indirect_sc = False
+
     line.discard_tracker()
 
     if particle_ref is None:
@@ -78,6 +84,8 @@ def install_spacecharge_frozen(line,
                 sc_element = SpaceChargeRectangular(**(trans_params|long_params|aper_params))
             else:
                 sc_element = SpaceChargeFree(**(trans_params|long_params))
+        elif linear == True:
+            sc_element = SpaceChargeLinear(**(trans_params|long_params))
         else:
             sc_element = SpaceChargeFree(**(trans_params|long_params))
 
