@@ -4,6 +4,9 @@ import xpart as xp
 import xobjects as xo
 import xfields as xf
 
+class Footprint:
+    pass
+
 def get_footprint_4d(line, nemitt_x=None, nemitt_y=None, n_turns=256,
                      mode='polar', r_range=(0.1, 6), theta_range=(0.05, np.pi/2 - 0.05),
                      n_r=10, n_theta=10,
@@ -11,6 +14,42 @@ def get_footprint_4d(line, nemitt_x=None, nemitt_y=None, n_turns=256,
                      n_x_norm=10, n_y_norm=10,
                      keep_tracking_data=False):
 
+    particles = _build_particles(nemitt_x, nemitt_y, mode,
+                                 r_range, theta_range, n_r, n_theta,
+                                 x_norm_range, y_norm_range,
+                                 n_x_norm, n_y_norm)
+
+    line.build_tracker(_context=xo.ContextCpu())
+    line.track(particles, 
+               num_turns=n_turns, 
+               turn_by_turn_monitor=True)
+    mon = line.record_last_track
+    
+    particles.sort(interleave_lost_particles=True)
+    mask = particles.state <= 0
+    x = mon.x - np.atleast_2d(mon.x.mean(axis=1)).T
+    y = mon.y - np.atleast_2d(mon.y.mean(axis=1)).T
+    px = mon.px - np.atleast_2d(mon.px.mean(axis=1)).T
+    py = mon.py - np.atleast_2d(mon.py.mean(axis=1)).T
+    qx = nafflib.multiparticle_tunes(x, px)
+    qy = nafflib.multiparticle_tunes(y, py)
+    qx[mask.T] = np.nan
+    qy[mask.T] = np.nan
+
+    fp = Footprint()
+    fp.qx = qx
+    fp.qy = qy
+    fp.x_norm = x_norm
+    fp.y_norm = y_norm
+    if keep_tracking_data:
+        fp.tracking_data = {'x': x, 'y': y,
+                            'px': px, 'py': py}
+    return fp
+
+def _build_particles(nemitt_x, nemitt_y, mode,
+                     r_range, theta_range, n_r, n_theta,
+                     x_norm_range, y_norm_range,
+                     n_x_norm, n_y_norm):
     if mode == 'polar':
         r = np.linspace(r_range[0], r_range[1], n_r)
         theta = np.linspace(theta_range[0], theta_range[1], n_theta)
@@ -34,37 +73,7 @@ def get_footprint_4d(line, nemitt_x=None, nemitt_y=None, n_turns=256,
         y_norm=y_norm,
         method='4d'
     )
-
-    line.build_tracker(_context=xo.ContextCpu())
-    line.track(particles, 
-               num_turns=n_turns, 
-               turn_by_turn_monitor=True)
-               #freeze_longitudinal=True)
-    mon = line.record_last_track
-    
-    particles.sort(interleave_lost_particles=True)
-    mask = particles.state <= 0
-    x = mon.x - np.atleast_2d(mon.x.mean(axis=1)).T
-    y = mon.y - np.atleast_2d(mon.y.mean(axis=1)).T
-    px = mon.px - np.atleast_2d(mon.px.mean(axis=1)).T
-    py = mon.py - np.atleast_2d(mon.py.mean(axis=1)).T
-    qx = nafflib.multiparticle_tunes(x, px)
-    qy = nafflib.multiparticle_tunes(y, py)
-    qx[mask.T] = np.nan
-    qy[mask.T] = np.nan
-    class Footprint:
-        pass
-
-    fp = Footprint()
-    fp.qx = qx
-    fp.qy = qy
-    fp.x_norm = x_norm
-    fp.y_norm = y_norm
-    if keep_tracking_data:
-        fp.tracking_data = {'x': x, 'y': y}
-
-    return fp
-
+    return particles
 
 def install_spacecharge_frozen(line,
                             number_of_particles,
