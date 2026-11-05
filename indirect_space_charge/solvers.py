@@ -136,7 +136,7 @@ def _uniform_field(x, y, a, b):
     return Ex, Ey
 
 def _circular_uniform(x, y, r):
-    r_sqrd = np.maximum(x**2 + y**2, r**2)
+    r_sqrd = r**2 # np.maximum(x**2 + y**2, r**2)
     Ex = x/r_sqrd
     Ey = y/r_sqrd
     return Ex, Ey
@@ -153,6 +153,7 @@ def _elliptical_uniform(x, y, a, B):
     Ey = y / (B * sum)
 
     # Outside the ellipse
+    """ Neglect non-linearity outside beam
     x_out, y_out = x[outside], y[outside]
     x_out_sqrd, y_out_sqrd = x_sqrd[outside], y_sqrd[outside]
 
@@ -162,5 +163,6 @@ def _elliptical_uniform(x, y, a, B):
     denom_out = root + np.sqrt((a_sqrd+root)*(b_sqrd + root))
     Ex[outside] = x_out / (a_sqrd + denom_out)
     Ey[outside] = y_out / (b_sqrd + denom_out)
+    """
 
     return 2*Ex, 2*Ey
