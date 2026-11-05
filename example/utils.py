@@ -14,10 +14,10 @@ def get_footprint_4d(line, nemitt_x=None, nemitt_y=None, n_turns=256,
                      n_x_norm=10, n_y_norm=10,
                      keep_tracking_data=False):
 
-    particles = _build_particles(line, nemitt_x, nemitt_y, mode,
-                                 r_range, theta_range, n_r, n_theta,
-                                 x_norm_range, y_norm_range,
-                                 n_x_norm, n_y_norm)
+    particles, x_norm, y_norm = _build_particles(
+        line, nemitt_x, nemitt_y, mode, r_range, theta_range,
+        n_r, n_theta, x_norm_range, y_norm_range, n_x_norm, n_y_norm
+        )
 
     line.build_tracker(_context=xo.ContextCpu())
     line.track(particles, 
@@ -73,7 +73,7 @@ def _build_particles(line, nemitt_x, nemitt_y, mode,
         y_norm=y_norm,
         method='4d'
     )
-    return particles
+    return particles, x_norm, y_norm
 
 def install_spacecharge_frozen(line,
                             number_of_particles,
